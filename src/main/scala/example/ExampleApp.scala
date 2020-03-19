@@ -1,6 +1,6 @@
 import java.io.File
 
-import scalismo.faces.color.{RGB, RGBA}
+import scalismo.color.{RGB, RGBA}
 import scalismo.faces.deluminate.SphericalHarmonicsOptimizer
 import scalismo.faces.image.{AccessMode, LabeledPixelImage, PixelImage, PixelImageOperations}
 import scalismo.faces.io.{PixelImageIO, TLMSLandmarksIO}
@@ -14,7 +14,7 @@ import scalismo.faces.sampling.face.proposals.ParameterProposals.implicits._
 import scalismo.faces.sampling.face.proposals.SphericalHarmonicsLightProposals._
 import scalismo.faces.sampling.face.proposals._
 import scalismo.faces.sampling.face.{MoMoRenderer, ParametricLandmarksRenderer, ParametricModel}
-import scalismo.geometry.{Vector, Vector3D, _1D, _2D}
+import scalismo.geometry.{EuclideanVector, EuclideanVector3D, _1D, _2D}
 import scalismo.sampling.algorithms.MetropolisHastings
 import scalismo.sampling.evaluators.ProductEvaluator
 import scalismo.sampling.proposals.MixtureProposal.implicits._
@@ -29,14 +29,11 @@ import scalismo.faces.gui.GUIBlock._
 import scalismo.faces.io.MoMoIO
 import scalismo.faces.sampling.face.ParametricImageRenderer
 import scalismo.faces.sampling.face.loggers.PrintLogger
-import faces.sampling.face.proposals.SegmentationMasterProposal
+import scalismo.faces.sampling.face.proposals.SegmentationMasterProposal
 
-object ExampleApp {
-
-    def main(args: Array[String]) {
-
-    	scalismo.initialize()
-	val seed = 1986L
-	implicit val rnd = Random(seed)
-  }
+object ExampleApp extends App {
+		scalismo.initialize()
+		val seed = 1986L
+		implicit val rnd = Random(seed)
+		println("success")
 }

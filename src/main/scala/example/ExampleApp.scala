@@ -383,6 +383,7 @@ object OcclusionFitScript{
 }
 
 
+
 object ExampleApp extends App {
   scalismo.initialize()
   val seed = 1986L

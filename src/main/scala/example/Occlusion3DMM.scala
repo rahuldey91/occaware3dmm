@@ -1,3 +1,6 @@
+
+package faces.apps
+
 import java.io.File
 
 import scalismo.color.{RGB, RGBA}
@@ -30,6 +33,7 @@ import scalismo.faces.io.MoMoIO
 import scalismo.faces.sampling.face.ParametricImageRenderer
 import scalismo.faces.sampling.face.loggers.PrintLogger
 import scalismo.faces.sampling.face.proposals.SegmentationMasterProposal
+
 
 
 /* This Fitscript with its evaluators and the proposal distribution follows closely the proposed setting of:
@@ -220,7 +224,7 @@ object OcclusionFitScript{
   def fit(targetFn : String, lmFn: String, outputDir: String, modelRenderer: MoMoRenderer, expression: Boolean = true)(implicit rnd: Random): (RenderParameter, PixelImage[Int]) = {
     val target = PixelImageIO.read[RGBA](new File(targetFn)).get
     val targetLM = TLMSLandmarksIO.read2D(new File(lmFn)).get.filter(lm => lm.visible)
-    ImagePanel(target).displayIn("Target Image")
+//    ImagePanel(target).displayIn("Target Image")
 
     // Building the proposal model
     /* Collection of all pose related proposals */
@@ -279,7 +283,7 @@ object OcclusionFitScript{
 
     val bestLM = lmScores.maxBy(_._1)._2
     val imgLM = modelRenderer.renderImage(bestLM)
-    ImagePanel(imgLM).displayIn("Pose Initialization")
+//    ImagePanel(imgLM).displayIn("Pose Initialization")
 
     val shOpt = SphericalHarmonicsOptimizer(modelRenderer, target)
     val robustShOptimizerProposal = RobustSHLightSolverProposalWithLabel(modelRenderer, shOpt, target, iterations = 100)
@@ -289,17 +293,17 @@ object OcclusionFitScript{
     val robustImg = modelRenderer.renderImage(robust._1)
     val consensusSet = robust._2.map(RGB(_))
 
-    shelf(
-      ImagePanel(robustImg),
-      ImagePanel(consensusSet)
-    ).displayIn("Robust Illumination Estimation")
+//    shelf(
+//      ImagePanel(robustImg),
+//      ImagePanel(consensusSet)
+//    ).displayIn("Robust Illumination Estimation")
 
-    val labeledPrintLogger = PrintLogger[(RenderParameter, PixelImage[Int])](Console.out, "").verbose
+    val labeledPrintLogger = PrintLogger[(RenderParameter, PixelImage[Int])](Console.out, "")//.verbose
     var first1000 = imageFitter.iterator(robust, labeledPrintLogger).take(1000).toIndexedSeq.last
     val first1000Img = modelRenderer.renderImage(first1000._1)
-    shelf(
-      ImagePanel(first1000Img)
-    ).displayIn("After first 1000 samples")
+//    shelf(
+//      ImagePanel(first1000Img)
+//    ).displayIn("After first 1000 samples")
 
     val nonfaceHist = HistogramRGB.fromImageRGBA(target, 25, 0)
     val nonfaceProb: PixelImage[Double] = target.map(p => nonfaceHist.logValue(p.toRGB))
@@ -371,10 +375,10 @@ object OcclusionFitScript{
       // visualize fit and label
       val zLabelImg = zLabel.map (l => RGB(l(Label(1))))
       val thetaImg = modelRenderer.renderImage(current._1)
-      shelf(
-        ImagePanel(zLabelImg),
-        ImagePanel(thetaImg)
-      ).displayIn("After Iteration: " + i)
+//      shelf(
+//        ImagePanel(zLabelImg),
+//        ImagePanel(thetaImg)
+//      ).displayIn("After Iteration: " + i)
       i += 1
     }
     current
@@ -384,11 +388,11 @@ object OcclusionFitScript{
 
 
 
-object ExampleApp extends App {
+object Occlusion3DMM extends App {
   scalismo.initialize()
   val seed = 1986L
   implicit val rnd = Random(seed)
-  println("success")
+  println("start")
 
   // Load face model and target image
   val modelface12 = MoMoIO.read(new File("data/model2017-1_face12_nomouth.h5")).get
@@ -402,4 +406,5 @@ object ExampleApp extends App {
   PixelImageIO.write(fit._2.map(p => if(1 == p) RGB.White else RGB.Black), new File(outDir + "finalSegmentation.png"))
   PixelImageIO.write(rendererFace12.renderImage(fit._1), new File(outDir + "finalFit.png"))
 
+  println("stop")
 }
